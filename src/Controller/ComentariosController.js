@@ -2,12 +2,14 @@ let Comentarios = require('../Model/Comentarios')
 const pool = require('../database/mysql')
 const ComentariosController = {
     async criar(req, res) {
-        const {comentarios, Avaliacao_Usuario, Usuarios_Id, Canil_Id} = req.body;
-        let sql = `insert into comentarios (usuarios_id, canil_id, comentarios, Avaliacao_Usuario) VALUES(?,?,?,?)`
-        const result = await pool.query(sql, [Usuarios_Id, Canil_Id,comentarios, Avaliacao_Usuario])
+        const data = new Date();
+
+        const {capitulos_id, usuarios_id, comentarios} = req.body;
+        let sql = `insert into comentarios (capitulos_id, usuarios_id, comentarios,data_comentario) VALUES(?,?,?,?)`
+        const result = await pool.query(sql, [capitulos_id, usuarios_id, comentarios,data])
         const insertId = result[0]?.insertId;
         if(!insertId) {
-            return res.status(401).json({message: 'erro ao criar postagem!'})
+            return res.status(401).json({message: 'erro ao criar comentario!'})
         }
         const sql_select = 'SELECT * from comentarios where id = ?'
         const [rows] = await pool.query(sql_select, [insertId])
@@ -36,9 +38,11 @@ const ComentariosController = {
         // Canil[canisIndex] = canis;
           
         // return res.status(201).json(canis);
-        const {comentarios, Avaliacao_Usuario} = req.body;
-        let sql = 'UPDATE comentarios SET comentarios=?,Avaliacao_Usuario=? WHERE id = ? '
-        const result = await pool.query(sql, [comentarios, Avaliacao_Usuario, Number(paramId)])
+        const {capitulos_id, usuarios_id, comentarios,data_comentario} = req.body;
+        const data = new Date();
+
+        let sql = 'UPDATE comentarios SET capitulos_id= ? usuarios_id= ? comentarios= ? data_comentario=? WHERE id = ? '
+        const result = await pool.query(sql, [capitulos_id, usuarios_id, comentarios, data, Number(paramId)])
 
         const changedRows = result[0]?.changedRows;
         if(!changedRows){

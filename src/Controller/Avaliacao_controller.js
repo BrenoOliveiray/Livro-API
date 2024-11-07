@@ -1,20 +1,29 @@
-let Comentarios = require('../Model/Comentarios')
+let Canil = require('../Model/CadastrarCanil')
 const pool = require('../database/mysql')
-const ClassesController = {
+const Avaliacao_Controller = {
     async criar(req, res) {
-        const {descricao} = req.body;
-        let sql = `insert into racas_classe (descricao) VALUES(?)`
-        const result = await pool.query(sql, [descricao])
+        const {usuarios_id, capitulos_id, avaliacao} = req.body;
+       
+        // const novoCanil = {
+        //     id: Canil[Canil.length-1]?.id ? Canil[Canil.length-1]?.id+1 : 1,
+        //     nome: nome,
+        //     email: email,
+        //     endereco: endereco,
+        //     img: imgUrl,
+        //     mensagem: mensagem,
+        // }
+        let sql = `insert into avaliacao (usuarios_id, capitulos_id, avaliacao) VALUES(?,?,?)`
+        const result = await pool.query(sql, [usuarios_id, capitulos_id,avaliacao])
         const insertId = result[0]?.insertId;
         if(!insertId) {
-            return res.status(401).json({message: 'erro ao criar postagem!'})
+            return res.status(401).json({message: 'erro ao favoritar!'})
         }
-        const sql_select = 'SELECT * from racas_classe where id = ?'
+        const sql_select = 'SELECT * from avaliacao where id = ?'
         const [rows] = await pool.query(sql_select, [insertId])
         return res.status(201).json(rows[0])
     },
     async listar(req, res) {
-        let sql = "select * from racas_classe";
+        let sql = "select * from avaliacao";
         const [rows] = await pool.query(sql);
         return res.status(200).json(rows);
     },
@@ -23,6 +32,7 @@ const ClassesController = {
         const paramId = req.params.id;
         // return res.status(201).json({id: paramId});
         //pegou os valores do form via body
+        const {usuarios_id, capitulos_id, avaliacao} = req.body;
         //recuperar a postagem a partir do id
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // const canisIndex = Canil.findIndex(canis => canis.id === parseInt(paramId))
@@ -36,15 +46,14 @@ const ClassesController = {
         // Canil[canisIndex] = canis;
           
         // return res.status(201).json(canis);
-        const {descricao} = req.body;
-        let sql = 'UPDATE racas_classe SET descricao =? WHERE id = ?'
-        const result = await pool.query(sql, [descricao, Number(paramId)])
+        let sql = 'UPDATE favoritos SET usuarios_id=?, capitulos=?, avaliacao=? WHERE id = ?'
+        const result = await pool.query(sql, [usuarios_id, capitulos_id, avaliacao, Number(paramId)])
 
         const changedRows = result[0]?.changedRows;
         if(!changedRows){
-            return res.status(401).json({message:'erro ao atualizar a classe!'})
+            return res.status(401).json({message:'erro ao atualizar a avaliacao'})
         }
-        const sql_select = `SELECT * FROM racas_classe WHERE id = ?`
+        const sql_select = `SELECT * FROM avaliacao WHERE id = ?`
         const [rows] = await pool.query(sql_select, [paramId])
         return res.status(201).json(rows[0])
     },
@@ -52,7 +61,7 @@ const ClassesController = {
         const paramId = req.params.id;
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // return res.status(201).json(canis);
-        const sql_select = `SELECT * FROM racas_classe WHERE id = ?`
+        const sql_select = `SELECT * FROM avaliacao WHERE id = ?`
         const [rows] = await pool.query(sql_select, Number(paramId))
         return res.status(201).json(rows[0])
     },
@@ -65,14 +74,14 @@ const ClassesController = {
     // ]
     //     return res.status(200).json({mensagem: "Canil deletado com sucesso!"})
     // }
-    let sql = `DELETE FROM racas_classe WHERE id = ?`
+    let sql = `DELETE FROM avaliacao WHERE id = ?`
     const result = await pool.query(sql, [Number(paramId)])
     console.log(result)
      const affectedRows = result[0]?.affectedRows;
      if(!affectedRows){
-         return res.status(401).json({message:'erro a classe!'})
+         return res.status(401).json({message:'erro ao desfavoritar!'})
      }
-    return res.status(200).json({mensagem: "Classe deletada com sucesso!"})
+    return res.status(200).json({mensagem: "desfavoritado com sucesso!"})
 }
 }
-module.exports = ClassesController;
+module.exports = Avaliacao_Controller;

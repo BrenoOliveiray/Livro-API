@@ -2,15 +2,14 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const crypto = require('crypto');
-const CadastrarRaca = require('../Controller/CadastroCapitulos');
 const FavoritosController = require('../Controller/FavoritosController');
-const CanilRacasController = require('../Controller/CanilRacasController');
 const ComentariosController = require('../Controller/ComentariosController');
-const ClassesController = require('../Controller/ClassesController');
 const CadastroController = require('../Controller/CadastroController');
 const CadastroLivro = require('../Controller/CadastroLivro');
-const CadastroGenero = require('../Controller/CadastroLivro');
 const CadastroCapitulos = require('../Controller/CadastroCapitulos');
+const Avaliacao_Controller = require('../Controller/avaliacao_controller');
+const PerguntasController = require('../Controller/Perguntas');
+const OpcaoController = require('../Controller/Opcao');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -89,26 +88,36 @@ router.get('/favoritos/:id', FavoritosController.show)
 router.delete('/favoritos/:id', FavoritosController.deletar)
  
 // CanilRacas Controller
-router.get('/canil_racas', CanilRacasController.listar)
+router.get('/avaliacao', Avaliacao_Controller.listar)
  
-router.post('/canil_racas', CanilRacasController.criar )
+router.post('/avaliacao', Avaliacao_Controller.criar )
  
-router.put('/canil_racas/:id', CanilRacasController.alterar)
+router.put('/avaliacao/:id', Avaliacao_Controller.alterar)
  
-router.get('/canil_racas/:id', CanilRacasController.show)
+router.get('/avaliacao/:id', Avaliacao_Controller.show)
  
-router.delete('/canil_racas', CanilRacasController.deletar)
+router.delete('/avaliacao/:id', Avaliacao_Controller.deletar)
 
-// CanilRacas Controller
-router.get('/classes', ClassesController.listar)
+router.get('/perguntas', PerguntasController.listar)
  
-router.post('/classes', ClassesController.criar )
+router.post('/perguntas', PerguntasController.criar )
  
-router.put('/classes/:id', ClassesController.alterar)
+router.put('/perguntas/:id', PerguntasController.alterar)
  
-router.get('/classes/:id', ClassesController.show)
+router.get('/perguntas/:id', PerguntasController.show)
  
-router.delete('/classes', ClassesController.deletar)
+router.delete('/perguntas/:id', PerguntasController.deletar)
+
+
+router.get('/opcao', OpcaoController.listar)
+ 
+router.post('/opcao', OpcaoController.criar )
+ 
+router.put('/opcao/:id', OpcaoController.alterar)
+ 
+router.get('/opcao/:id', OpcaoController.show)
+ 
+router.delete('/opcao/:id', OpcaoController.deletar)
 
 
 module.exports = router; 
