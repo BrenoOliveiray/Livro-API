@@ -10,6 +10,7 @@ const CadastroCapitulos = require('../Controller/CadastroCapitulos');
 const Avaliacao_Controller = require('../Controller/avaliacao_controller');
 const PerguntasController = require('../Controller/Perguntas');
 const OpcaoController = require('../Controller/Opcao');
+const VotacaoController = require('../Controller/Votacao');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -119,5 +120,14 @@ router.get('/opcao/:id', OpcaoController.show)
  
 router.delete('/opcao/:id', OpcaoController.deletar)
 
+router.get('/votacao', VotacaoController.listar)
+ 
+router.post('/votacao', VotacaoController.criar )
+ 
+router.put('/votacao/:id', VotacaoController.alterar)
+ 
+router.get('/votacao/:id', VotacaoController.show)
+ 
+router.delete('/votacao/:id', VotacaoController.deletar)
 
 module.exports = router; 
