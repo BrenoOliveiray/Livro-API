@@ -3,10 +3,11 @@ const pool = require('../database/mysql')
 const CadastroGenero = {
     async criar(req, res) {
         console.log(req.body)
-        const {generos_id, usuarios_id, nome, sinopse, tags, avaliacao_geral} = req.body;
+        const usuarios_id = req.userId;
+        const {generos_id, nome, sinopse, tags, avaliacao_geral} = req.body;
     
         // Definindo a URL base da imagem
-        let imgUrl = 'http://localhost:3333/images/';
+        let imgUrl = 'http://localhost:3333/images';
     
         // Verifica se um arquivo de imagem foi enviado
         if (req.file) {
@@ -39,16 +40,18 @@ const CadastroGenero = {
         }
     },
     async listar(req, res) {
-        let sql = "select * from livros";
+        let sql = "select * from livros ";
         const [rows] = await pool.query(sql);
         return res.status(200).json(rows);
     },
     async alterar(req, res){
         //pegar o id via parametro da url de requisiçao
         const paramId = req.params.id;
+        const usuarios_id = req.userId;
+
         // return res.status(201).json({id: paramId});
         //pegou os valores do form via body
-        const {generos_id, usuarios_id, nome, sinopse, tags, avaliacao_geral} = req.body;
+        const {generos_id, nome, sinopse, tags, avaliacao_geral} = req.body;
         let imgUrl = 'http://localhost:3333/images/'
           if(req.file) {
             imgUrl = imgUrl + `${req.file.filename}`
@@ -78,12 +81,10 @@ const CadastroGenero = {
         return res.status(201).json(rows[0])
     },
     async show(req, res){
-        const paramId = req.params.id;
-        // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
-        // return res.status(201).json(canis);
-        const sql_select = `SELECT * FROM livros WHERE id = ?`
-        const [rows] = await pool.query(sql_select, Number(paramId))
-        return res.status(201).json(rows[0])
+      const usuarios_id = req.userId
+        const sql_select = `SELECT * FROM livros WHERE  usuarios_id= ?`
+        const [rows] = await pool.query(sql_select, Number(usuarios_id))
+        return res.status(201).json(rows)
     },
     async deletar(req, res){
         const paramId = req.params.id;

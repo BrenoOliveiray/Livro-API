@@ -2,7 +2,9 @@ let Canil = require('../Model/CadastrarCanil')
 const pool = require('../database/mysql')
 const Avaliacao_Controller = {
     async criar(req, res) {
-        const {usuarios_id, capitulos_id, avaliacao} = req.body;
+        const usuarios_id = req.userId;
+
+        const { capitulos_id, avaliacao} = req.body;
        
         // const novoCanil = {
         //     id: Canil[Canil.length-1]?.id ? Canil[Canil.length-1]?.id+1 : 1,
@@ -30,9 +32,11 @@ const Avaliacao_Controller = {
     async alterar(req, res){
         //pegar o id via parametro da url de requisiçao
         const paramId = req.params.id;
+        const usuarios_id = req.userId;
+
         // return res.status(201).json({id: paramId});
         //pegou os valores do form via body
-        const {usuarios_id, capitulos_id, avaliacao} = req.body;
+        const { capitulos_id, avaliacao} = req.body;
         //recuperar a postagem a partir do id
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // const canisIndex = Canil.findIndex(canis => canis.id === parseInt(paramId))
@@ -58,11 +62,11 @@ const Avaliacao_Controller = {
         return res.status(201).json(rows[0])
     },
     async show(req, res){
-        const paramId = req.params.id;
+        const usuarios_id = req.userId;
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // return res.status(201).json(canis);
-        const sql_select = `SELECT * FROM avaliacao WHERE id = ?`
-        const [rows] = await pool.query(sql_select, Number(paramId))
+        const sql_select = `SELECT * FROM avaliacao WHERE usuarios_id = ?`
+        const [rows] = await pool.query(sql_select, Number(usuarios_id))
         return res.status(201).json(rows[0])
     },
     async deletar(req, res){

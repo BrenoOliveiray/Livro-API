@@ -2,7 +2,9 @@ let Canil = require('../Model/CadastrarCanil')
 const pool = require('../database/mysql')
 const FavoritosController = {
     async criar(req, res) {
-        const {usuarios_id, livros_id} = req.body;
+        const usuarios_id = req.userId;
+
+        const {livros_id} = req.body;
        
         // const novoCanil = {
         //     id: Canil[Canil.length-1]?.id ? Canil[Canil.length-1]?.id+1 : 1,
@@ -30,9 +32,11 @@ const FavoritosController = {
     async alterar(req, res){
         //pegar o id via parametro da url de requisiçao
         const paramId = req.params.id;
+        const usuarios_id = req.userId;
+
         // return res.status(201).json({id: paramId});
         //pegou os valores do form via body
-        const {usuarios_id, canil_id} = req.body;
+        const {capitulos_id} = req.body;
         //recuperar a postagem a partir do id
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // const canisIndex = Canil.findIndex(canis => canis.id === parseInt(paramId))
@@ -47,7 +51,7 @@ const FavoritosController = {
           
         // return res.status(201).json(canis);
         let sql = 'UPDATE favoritos SET usuarios_id=?, livros_id=? WHERE id = ?'
-        const result = await pool.query(sql, [usuarios_id, canil_id, Number(paramId)])
+        const result = await pool.query(sql, [usuarios_id, capitulos_id, Number(paramId)])
 
         const changedRows = result[0]?.changedRows;
         if(!changedRows){
@@ -58,11 +62,12 @@ const FavoritosController = {
         return res.status(201).json(rows[0])
     },
     async show(req, res){
-        const paramId = req.params.id;
+        const usuarios_id = req.userId;
+        
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // return res.status(201).json(canis);
-        const sql_select = `SELECT * FROM favoritos WHERE id = ?`
-        const [rows] = await pool.query(sql_select, Number(paramId))
+        const sql_select = `SELECT * FROM favoritos WHERE usuarios_id = ?`
+        const [rows] = await pool.query(sql_select, Number(usuarios_id))
         return res.status(201).json(rows[0])
     },
     async deletar(req, res){

@@ -1,11 +1,20 @@
 let Usuario = require('../Model/Cadastro');
 const pool = require('./../database/mysql')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const generateToken = (user) => {
+    const payload = {
+        id: user.id
+    };
+    return jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '24h'} )
+}
+
 
 const CadastroController = {
     async criar(req, res) {
         try {
-            const {nome, cpf, email, senha, telefone, flag} = req.body;
+            const {nome, cpf, email, senha, telefone, flag} = JSON.parse(req.body);;
             console.log(req.file)
             let imgUrl = 'http://localhost:3333/images';
     
@@ -43,29 +52,35 @@ const CadastroController = {
     },
   async login(req, res) {
    // pega os dados do body
-   const{email, senha} = req.body;
+   const {email, senha} = req.body;
    console.log(senha)
-   //monta o select
-   const sql_select = `SELECT * from usuarios where email = ?`
-   // retorna o select
+
+   const sql_select = `SELECT * FROM usuarios WHERE email = ?`
+
    const [rows] = await pool.query(sql_select, [email])
    console.log(rows)
-   // verifica se existe email 
+
    if(!rows?.length)
-       return res.status(401).json({message: 'Login incorreto'})
+       return res.status(401).json({message: "Email ou senha incorretos!"})
 
-   console.log(rows[0]?.senha)
-   // compare no hash do password
-   const isPasswordValid = await bcrypt.compare(String(senha), String(rows[0]?.senha) )
+
+   const isPasswordValid = await bcrypt.compare(String(senha), String(rows[0]?.senha))
    console.log(isPasswordValid)
-   //se nao der match ou seja password nao eh valido retorna erro
    if(!isPasswordValid)
-       return res.status(401).json({message: 'Login incorreto'}) 
-   //remove do json a chave password
-   delete rows[0]?.senha
+   {
+       return res.status(401).json({message: "Senha incorreta!"})
+   } 
+   delete rows[0]?.senha;
+   let user = rows[0]
+   console.log(user.id)
+   const token = generateToken(user)
 
-   // retorna o usuario
-   return res.status(201).json(rows[0])
+   user = {
+       ...user,
+       token
+   }
+   // return res.status(201).json(rows[0])
+   return res.status(201).json({user, message: "Logado com sucesso!"})
 
     
     },
@@ -73,9 +88,10 @@ const CadastroController = {
  
     async listar(req, res) {
         // return res.status(200).json(Usuario);
-        let sql = "select * from usuarios";
-        const [rows] = await pool.query(sql);
-        return res.status(200).json(rows);
+
+        const sql_select = `SELECT * FROM usuarios WHERE id = ?`
+        const [rows] = await pool.query(sql_select, Number(req.userId))
+        return res.status(201).json(rows[0])
     },
     async alterar(req, res){
         //pegar o id via parametro da url de requisiçao

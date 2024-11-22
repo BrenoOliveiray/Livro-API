@@ -11,6 +11,7 @@ const Avaliacao_Controller = require('../Controller/avaliacao_controller');
 const PerguntasController = require('../Controller/Perguntas');
 const OpcaoController = require('../Controller/Opcao');
 const VotacaoController = require('../Controller/Votacao');
+const authenticateJWT = require('../middleware/auth');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -31,103 +32,106 @@ router.get('/ping', (req, res) => {
     })
 })
 
+router.get('/users', authenticateJWT, CadastroController.listar);
+
+
 router.post('/usuarios', upload.single('avatar'), CadastroController.criar)
 
-router.put('/usuarios/:id', CadastroController.alterar)
+router.put('/usuarios/:id',  authenticateJWT,CadastroController.alterar)
 
-router.get('/usuarios', CadastroController.listar)
+router.get('/usuarios',  authenticateJWT,CadastroController.listar)
 
-router.get('/usuarios/:id', CadastroController.show);
+router.get('/usuarios/:id',  authenticateJWT,CadastroController.show);
 
-router.delete('/usuarios/:id', CadastroController.deletar)
+router.delete('/usuarios/:id',  authenticateJWT,CadastroController.deletar)
 
-router.post('/login', CadastroController.login)
+router.post('/login',  CadastroController.login)
 
 // canil cadastro
-router.get('/livros', CadastroLivro.listar)
+router.get('/livros',  CadastroLivro.listar)
 
-router.post('/livros', upload.single('imagem'), CadastroLivro.criar )
+router.post('/livros',  upload.single('file'), authenticateJWT,CadastroLivro.criar )
 
-router.put('/livros/:id',  upload.single('file'), CadastroLivro.alterar)
+router.put('/livros/:id',   upload.single('file'), authenticateJWT,CadastroLivro.alterar)
 
-router.get('/livros/:id', CadastroLivro.show)
+router.get('/livros/meuslivros',  authenticateJWT,CadastroLivro.show)
 
-router.delete('/livros/:id', CadastroLivro.deletar)
+router.delete('/livros/:id',  authenticateJWT,CadastroLivro.deletar)
 //comentarios
 
-router.get('/comentarios', ComentariosController.listar)
+router.get('/comentarios',  authenticateJWT,ComentariosController.listar)
 
-router.post('/comentarios', ComentariosController.criar )
+router.post('/comentarios',  authenticateJWT,ComentariosController.criar )
 
-router.put('/comentarios/:id',  ComentariosController.alterar)
+router.put('/comentarios/:id',   authenticateJWT,ComentariosController.alterar)
 
-router.get('/comentarios/:id', ComentariosController.show)
+router.get('/comentarios/meuscomentarios',  authenticateJWT,ComentariosController.show)
 
-router.delete('/comentarios/:id', ComentariosController.deletar)
+router.delete('/comentarios/:id',  authenticateJWT,ComentariosController.deletar)
 
 //  cadastro raças
-router.get('/capitulos', CadastroCapitulos.listar)
+router.get('/capitulos',  authenticateJWT,CadastroCapitulos.listar)
 
-router.post('/capitulos', upload.single('upload'), CadastroCapitulos.criar )
+router.post('/capitulos', upload.single('upload'),  authenticateJWT,CadastroCapitulos.criar )
 
-router.put('/capitulos/:id',  upload.single('upload'),CadastroCapitulos.alterar)
+router.put('/capitulos/:id',  upload.single('upload'), authenticateJWT,CadastroCapitulos.alterar)
 
-router.get('/capitulos/:id', CadastroCapitulos.show)
+router.get('/capitulos/:id', authenticateJWT,CadastroCapitulos.show)
 
-router.delete('/capitulos/:id', CadastroCapitulos.deletar)
+router.delete('/capitulos/:id', authenticateJWT,CadastroCapitulos.deletar)
 
 
 // Favoritos Controller
-router.get('/favoritos', FavoritosController.listar)
+router.get('/favoritos', authenticateJWT,FavoritosController.listar)
  
-router.post('/favoritos', FavoritosController.criar )
+router.post('/favoritos', authenticateJWT,FavoritosController.criar )
  
-router.put('/favoritos/:id', FavoritosController.alterar)
+router.put('/favoritos/:id', authenticateJWT,FavoritosController.alterar)
  
-router.get('/favoritos/:id', FavoritosController.show)
+router.get('/favoritos/:meusfavoritos', authenticateJWT,FavoritosController.show)
  
-router.delete('/favoritos/:id', FavoritosController.deletar)
+router.delete('/favoritos/:id', authenticateJWT,FavoritosController.deletar)
  
 // CanilRacas Controller
-router.get('/avaliacao', Avaliacao_Controller.listar)
+router.get('/avaliacao', authenticateJWT,Avaliacao_Controller.listar)
  
-router.post('/avaliacao', Avaliacao_Controller.criar )
+router.post('/avaliacao', authenticateJWT,Avaliacao_Controller.criar )
  
-router.put('/avaliacao/:id', Avaliacao_Controller.alterar)
+router.put('/avaliacao/:id', authenticateJWT,Avaliacao_Controller.alterar)
  
-router.get('/avaliacao/:id', Avaliacao_Controller.show)
+router.get('/avaliacao/:minhasavaliacoes', authenticateJWT,Avaliacao_Controller.show)
  
-router.delete('/avaliacao/:id', Avaliacao_Controller.deletar)
+router.delete('/avaliacao/:id', authenticateJWT,Avaliacao_Controller.deletar)
 
-router.get('/perguntas', PerguntasController.listar)
+router.get('/perguntas', authenticateJWT,PerguntasController.listar)
  
-router.post('/perguntas', PerguntasController.criar )
+router.post('/perguntas', authenticateJWT,PerguntasController.criar )
  
-router.put('/perguntas/:id', PerguntasController.alterar)
+router.put('/perguntas/:id', authenticateJWT,PerguntasController.alterar)
  
-router.get('/perguntas/:id', PerguntasController.show)
+router.get('/perguntas/:id', authenticateJWT,PerguntasController.show)
  
-router.delete('/perguntas/:id', PerguntasController.deletar)
+router.delete('/perguntas/:id', authenticateJWT,PerguntasController.deletar)
 
 
-router.get('/opcao', OpcaoController.listar)
+router.get('/opcao', authenticateJWT,OpcaoController.listar)
  
-router.post('/opcao', OpcaoController.criar )
+router.post('/opcao', authenticateJWT,OpcaoController.criar )
  
-router.put('/opcao/:id', OpcaoController.alterar)
+router.put('/opcao/:id', authenticateJWT,OpcaoController.alterar)
  
-router.get('/opcao/:id', OpcaoController.show)
+router.get('/opcao/:id', authenticateJWT,OpcaoController.show)
  
-router.delete('/opcao/:id', OpcaoController.deletar)
+router.delete('/opcao/:id', authenticateJWT,OpcaoController.deletar)
 
-router.get('/votacao', VotacaoController.listar)
+router.get('/votacao', authenticateJWT,VotacaoController.listar)
  
-router.post('/votacao', VotacaoController.criar )
+router.post('/votacao', authenticateJWT,VotacaoController.criar )
  
-router.put('/votacao/:id', VotacaoController.alterar)
+router.put('/votacao/:id', authenticateJWT,VotacaoController.alterar)
  
-router.get('/votacao/:id', VotacaoController.show)
+router.get('/votacao/:minhasvotacoes', authenticateJWT,VotacaoController.show)
  
-router.delete('/votacao/:id', VotacaoController.deletar)
+router.delete('/votacao/:id', authenticateJWT,VotacaoController.deletar)
 
 module.exports = router; 

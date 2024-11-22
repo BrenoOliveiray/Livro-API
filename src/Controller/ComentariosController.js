@@ -3,8 +3,9 @@ const pool = require('../database/mysql')
 const ComentariosController = {
     async criar(req, res) {
         const data = new Date();
+        const usuarios_id = req.userId;
 
-        const {capitulos_id, usuarios_id, comentarios} = req.body;
+        const {capitulos_id, comentarios} = req.body;
         let sql = `insert into comentarios (capitulos_id, usuarios_id, comentarios,data_comentario) VALUES(?,?,?,?)`
         const result = await pool.query(sql, [capitulos_id, usuarios_id, comentarios,data])
         const insertId = result[0]?.insertId;
@@ -22,7 +23,9 @@ const ComentariosController = {
     },
     async alterar(req, res){
         //pegar o id via parametro da url de requisiçao
+        const usuarios_id = req.userId;
         const paramId = req.params.id;
+
         // return res.status(201).json({id: paramId});
         //pegou os valores do form via body
         //recuperar a postagem a partir do id
@@ -38,7 +41,7 @@ const ComentariosController = {
         // Canil[canisIndex] = canis;
           
         // return res.status(201).json(canis);
-        const {capitulos_id, usuarios_id, comentarios,data_comentario} = req.body;
+        const {capitulos_id, comentarios} = req.body;
         const data = new Date();
 
         let sql = 'UPDATE comentarios SET capitulos_id= ? usuarios_id= ? comentarios= ? data_comentario=? WHERE id = ? '
@@ -53,11 +56,11 @@ const ComentariosController = {
         return res.status(201).json(rows[0])
     },
     async show(req, res){
-        const canil_id = req.params.id;
+        const usuarios_id = req.userId;
         // const canis = Canil.find(canis => canis.id === parseInt(paramId) ? true : false);
         // return res.status(201).json(canis);
-        const sql_select = `SELECT * FROM comentarios WHERE canil_id = ?`
-        const [rows] = await pool.query(sql_select, [canil_id])
+        const sql_select = `SELECT * FROM comentarios WHERE usuarios_id = ?`
+        const [rows] = await pool.query(sql_select, [usuarios_id])
         return res.status(201).json(rows)
     },
     async deletar(req, res){
