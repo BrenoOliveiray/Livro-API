@@ -2,6 +2,7 @@ let Usuario = require('../Model/Cadastro');
 const pool = require('./../database/mysql')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { show } = require('./CadastroLivro');
 
 const generateToken = (user) => {
     const payload = {
@@ -14,15 +15,15 @@ const generateToken = (user) => {
 const CadastroController = {
     async criar(req, res) {
         try {
-            const {nome, cpf, email, senha, telefone, flag} = JSON.parse(req.body);;
+            const {nome, cpf, email, senha, telefone, flag} = req.body;
             console.log(req.file)
             let imgUrl = 'http://localhost:3333/images';
-    
+   
             // Verifica se um arquivo de imagem foi enviado
             if (req.file) {
                 imgUrl += `${req.file.filename}`;
             }
-    
+   
             console.log(senha)
             //verifica se o email ja existe no banco
             const sql_select_existe = `SELECT * from usuarios where email = ?`
@@ -30,7 +31,7 @@ const CadastroController = {
             console.log([result_existe])
             if(result_existe[0])
                 return res.status(401).json({message: 'Erro ao criar usuario'})
-    
+   
             //criptografa o password
             const salt = await bcrypt.genSalt(10);
             const hashSenha = await bcrypt.hash(String(senha), salt);
@@ -48,7 +49,7 @@ const CadastroController = {
         } catch (error) {
             console.log(error)
         }
-        
+       
     },
   async login(req, res) {
    // pega os dados do body
@@ -90,8 +91,8 @@ const CadastroController = {
         // return res.status(200).json(Usuario);
 
         const sql_select = `SELECT * FROM usuarios WHERE id = ?`
-        const [rows] = await pool.query(sql_select, Number(req.userId))
-        return res.status(201).json(rows[0])
+        const [rows] = await pool.query(sql_select, [req.userId])
+        return res.status(201).json(rows)
     },
     async alterar(req, res){
         //pegar o id via parametro da url de requisiçao
@@ -130,12 +131,11 @@ const CadastroController = {
         return res.status(201).json(rows[0])
     },
     async show(req, res){
-        const paramId = req.params.id;
         // const usuarios = Usuario.find(usuarios => usuarios.id === parseInt(paramId) ? true : false);
         // return res.status(201).json(usuarios);
-        const sql_select = `SELECT * FROM usuarios WHERE id = ?`
-        const [rows] = await pool.query(sql_select, Number(paramId))
-        return res.status(201).json(rows[0])
+        let sql = "select * from usuarios ";
+        const [rows] = await pool.query(sql);
+        return res.status(200).json(rows);
     },
     async deletar(req, res){
         const paramId = req.params.id;

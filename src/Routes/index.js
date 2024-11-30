@@ -41,11 +41,11 @@ router.put('/usuarios/:id',  authenticateJWT,CadastroController.alterar)
 
 router.get('/usuarios',  authenticateJWT,CadastroController.listar)
 
-router.get('/usuarios/:id',  authenticateJWT,CadastroController.show);
+router.get('/usuarios/listar',  CadastroController.show);
 
 router.delete('/usuarios/:id',  authenticateJWT,CadastroController.deletar)
 
-router.post('/login',  CadastroController.login)
+router.post('/login',   CadastroController.login)
 
 // canil cadastro
 router.get('/livros',  CadastroLivro.listar)
