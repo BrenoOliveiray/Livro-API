@@ -20,4 +20,4 @@ server.use((req, res) => {
     res.send('Rota não encontrada')
 })
 
-server.listen(process.env.PORTA)
+server.listen(process.env.PORT)
